@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: "Infraestrutura do Microserviço de Pedidos"
+
+Resources:
+  PedidoEC2:
+    Type: "AWS::EC2::Instance"
+    Properties:
+      InstanceType: "t2.micro"
+      ImageId: "ami-0c55b159cbfafe1f0" # Amazon Linux 2 (us-east-1)
+      KeyName: "fatec-5sem"
+      SecurityGroups:
+        - Ref: PedidoSecurityGroup
+
+  PedidoSecurityGroup:
+    Type: "AWS::EC2::SecurityGroup"
+    Properties:
+      GroupDescription: "Permite acesso SSH e HTTP"
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+        - IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+          CidrIp: 0.0.0.0/0
+
+  PedidoSQS:
+    Type: "AWS::SQS::Queue"
+    Properties:
+      QueueName: "fila-pedidos"
+
+Outputs:
+  EC2InstanceId:
+    Description: "ID da instância EC2"
+    Value: !Ref PedidoEC2
